@@ -1,0 +1,148 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, Roboto, system-ui, Avenir, Helvetica, Arial, Georgia, 'Times New Roman', Times, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+  /* COLOR THEME NEW */
+  --customBgBlue: #4993A3;
+  --customBgLightBlue: #DDEAED;
+  --customBgWhite: #F5F5F5;
+  --customButtonLightBg: rgba(209, 219, 222, 0.5);
+  --customBgLightCardColor: #EEF5F6;
+  
+  /* CUSTOM TEXT COLOR */
+  --customWhite: #EFEFEF;
+  --customBlack: #1C1C1C;
+  --customHeadingColor: rgba(11, 125, 151, 1);
+  
+  /* LINK COLOR */
+  --linkColor: #578FCA;
+  --activeBg: #154B57;
+  
+  /* BG COLOR WITH OPACITY */
+  --customBgLightBlueOpacity: rgba(221, 234, 237, 0.3);
+  --customBgBlueOpacity: rgba(73, 147, 163, 0.7);
+    
+  /* GRADIENT TEXT COLOR */
+  --gradientText: linear-gradient(to right, #64B0C1 100%, #2F535B 84%);
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0) grayscale(100%) brightness(0);
+}
+
+.bg-customBlue {
+  background: var(--customBgBlue);
+  opacity: 70%;
+}
+.bg-customLightBlue {
+  background: var(--customBgLightBlue);
+  opacity: 100%;
+}
+.button-blue-bg {
+  background: var(--customBlue);
+  opacity: 100%;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Optional: just make scrollbar invisible */
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+* {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+}
+
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+html {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  margin: 0;
+  padding: 0;
+}
+
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  place-items: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+.debug {
+  border: 2px solid red;
+}
+
+.gradient-bg {
+  background: linear-gradient(to bottom, #64B0C1 50%, #0F58B9);
+}
+

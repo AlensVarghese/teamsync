@@ -1,0 +1,81 @@
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Set New Password</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+
+    function App() {
+      return (
+        <div className="flex items-center justify-center min-h-screen bg-gray-100">
+          <div className="flex flex-col md:flex-row bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="w-full md:w-1/2 p-8 flex flex-col justify-center ">
+              <h2 className="text-2xl font-bold text-[#64B0C1] mb-2 text-center">Set new password</h2>
+              <p className="text-gray-500 mb-6 text-center">Must be at least 8 characters</p>
+              <div className="mb-4">
+                <div className="relative">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+                    <i className="fas fa-eye"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="mb-6">
+                <div className="relative">
+                  <input
+                    type="password"
+                    placeholder="Confirm Password"
+                    className="w-full px-4 py-3 bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-600"
+                  />
+                  <div className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500">
+                    <i className="fas fa-eye"></i>
+                  </div>
+                </div>
+              </div>
+              <div className="flex justify-center">
+                <button className="bg-[#4B82B8] text-white font-bold py-3 px-6 rounded-full hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-300">
+                Reset Password
+                </button>
+              </div>
+
+
+
+              <br/><a href="#" className="text-teal-600 hover:underline flex items-center justify-center">
+                <i className="fas fa-arrow-left mr-2"></i>
+                Back to log in
+              </a>
+            </div>
+            <div className="hidden md:block md:w-1/2 bg-teal-100 relative">
+              <div className="absolute inset-0 flex items-center justify-center p-8">
+                <p className="text-white text-center text-lg font-semibold">
+                    Team Sync<br/>
+                  "Manage projects, track tasks, and collaborate seamlessly - all in one place. Sign up now and boost your team's productivity!"
+                </p>
+              </div>
+              <img
+                src="https://storage.googleapis.com/a1aa/image/C7Vr-xlTtFfXDEUHi80zui-vgJd5NSEktm-ZFyV_ybg.jpg"
+                alt="Person working on a laptop in a cozy room with a plant and a notebook"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    ReactDOM.render(<App />, document.getElementById('root'));
+  </script>
+  <script src="https://unpkg.com/react@17/umd/react.development.js"></script>
+  <script src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</body>
+</html>
