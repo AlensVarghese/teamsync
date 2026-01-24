@@ -43,7 +43,7 @@ const Signup = () => {
         {
           email,
           password,
-          // userType, // Uncomment if defined elsewhere
+          //userType, // Uncomment if defined elsewhere
           firstName,
           lastName,
         }
