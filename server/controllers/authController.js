@@ -78,8 +78,8 @@ const forgotPassword = async (req, res) => {
       host: 'smtp.gmail.com',
       port: 465,
       auth: {
-        user: 'goravjindal86@gmail.com',  // Replace with your email
-        pass: 'kggsuzesmoewxvhl',    // Replace with your email password or app password
+        user: 'lozbygaming@gmail.com',  // Replace with your email
+        pass: 'onpydzokgawlolho',    // Replace with your email password or app password
       },
     });
 
