@@ -133,7 +133,7 @@ const Home = () => {
                 {bottomNavLinks.map((link, index) => {
                   if (
                     link.navTitle === "Admin" &&
-                    user?.email !== "teamsyncadmin@gmail.com"
+                    user?.email !== "alen.inmca2126@saintgits.org"
                   ) {
                     // Render as a disabled red danger button with a tooltip.
                     return (

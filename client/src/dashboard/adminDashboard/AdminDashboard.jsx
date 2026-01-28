@@ -28,7 +28,7 @@ const ManageUsers = () => {
         const response = await axios.get("http://localhost:5000/api/auth/users");
         // Filter out the admin user
         const filteredUsers = response.data.filter(
-          (user) => user.email !== "teamsyncadmin@gmail.com"
+          (user) => user.email !== "alen.inmca2126@saintgits.org"
         );
         setUsers(filteredUsers);
       } catch (error) {
