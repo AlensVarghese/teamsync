@@ -47,11 +47,13 @@ const loginUser = async (req, res) => {
     if (!match) {
       return res.status(400).json({ message: 'Invalid credentials' });
     }
+    // Assign role based on your hardcoded admin email
+    const role = (email === 'alen.inmca2126@saintgits.org') ? 'Admin' : 'User';
 
     // Generate a JWT token
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ userId: user._id, role: role }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
-    res.status(200).json({ message: 'Login successful', token, email });
+    res.status(200).json({ message: 'Login successful', token, email, role: role });
   } catch (error) {
     res.status(500).json({ message: 'Error logging in user', error });
   }

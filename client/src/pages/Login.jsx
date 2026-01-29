@@ -39,9 +39,10 @@ const Login = () => {
       //console.log("Response from API:", response);
       localStorage.setItem("token", response.data.token);
       localStorage.setItem("userEmail", response.data.email);
+      localStorage.setItem("userRole", response.data.role); // Save role here
 
       // Set global user state
-      setUser({ email: response.data.email });
+      setUser({ email: response.data.email,role: response.data.role });
       
       setSuccessMessage(response.data.message);
       navigate("/home");

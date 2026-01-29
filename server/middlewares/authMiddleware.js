@@ -19,4 +19,13 @@ const authenticateToken = (req, res, next) => {
   });
 };
 
-module.exports = authenticateToken;
+// NEW: Role-based authorization logic
+const authorizeAdmin = (req, res, next) => {
+  if (req.user && req.user.role === 'Admin') {
+    next();
+  } else {
+    res.status(403).json({ message: 'Access denied: Admins only' });
+  }
+};
+
+module.exports = { authenticateToken, authorizeAdmin };

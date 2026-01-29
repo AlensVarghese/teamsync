@@ -5,11 +5,14 @@ import { useProjects } from "../../../utils/ProjectsContext";
 import axios from "axios";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 
+import { useUser } from "../../../utils/UserContext";
+
 // Helper function to derive a username from an email.
 const getUsernameFromEmail = (email) => (email ? email.split("@")[0] : "");
 
 const ProjectsComp = () => {
   const { projects, setProjects, updateProject } = useProjects();
+  const { user } = useUser(); // Add this line here
 
   // Get the user's email from localStorage
   const currentUserEmail = localStorage.getItem("userEmail");
@@ -56,6 +59,9 @@ const ProjectsComp = () => {
   const handleAddProjectSubmit = async (e) => {
     e.preventDefault();
 
+    // 1. Retrieve the token from localStorage
+    const token = localStorage.getItem("token");
+
     // Prepare the new project data with the current user's email as admin
     const newProject = {
       title: newProjectTitle,
@@ -68,7 +74,12 @@ const ProjectsComp = () => {
     try {
       const response = await axios.post(
         "http://localhost:5000/api/projects/",
-        newProject
+        newProject,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
       // Add the new project at the beginning of the list
       setProjects([response.data, ...projects]);
@@ -137,9 +148,11 @@ const ProjectsComp = () => {
             </Button>
           ))}
         </div>
+        {user?.role === 'Admin' && (
         <Button onClick={openAddProject} className="py-1 text-sm !bg-customBgBlue hover:!bg-customHeadingColor text-white">
           + Add Project
         </Button>
+        )}
       </div>
       <p className="mt-4 text-sm text-customBlack">Current Filter: {filter}</p>
 

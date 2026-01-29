@@ -7,6 +7,8 @@ const Comment = require('../models/Comment');
 const nodemailer = require('nodemailer');
 const router = express.Router();
 const fs = require('fs')
+//importing the authorization of admin
+const { authenticateToken, authorizeAdmin } = require('../middlewares/authMiddleware');
 
 // Configure multer for file uploads
 const storage = multer.diskStorage({
@@ -52,7 +54,7 @@ async function sendEmailNotifications(project, subject, text) {
 }
 
 // Create a new project
-router.post('/', async (req, res) => {
+router.post('/', authenticateToken, authorizeAdmin, async (req, res) => {
   const { title, description, progress, adminEmail, members } = req.body;
 
   if (!title || !description || !adminEmail || !Array.isArray(members)) {
@@ -108,7 +110,7 @@ router.get('/', async (req, res) => {
 });
 
 // Update a project
-router.put("/:projectId", async (req, res) => {
+router.put("/:projectId", authenticateToken, authorizeAdmin, async (req, res) => {
   const { projectId } = req.params;
   const updatedData = req.body;
 
@@ -161,7 +163,7 @@ router.get('/:projectId', async (req, res) => {
 });
 
 // Delete a project by ID
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const deletedProject = await Project.findByIdAndDelete(id);
@@ -181,7 +183,7 @@ router.delete("/:id", async (req, res) => {
 });
 
 // Toggle archive status of a project by ID
-router.patch("/:id/archive", async (req, res) => {
+router.patch("/:id/archive", authenticateToken, authorizeAdmin, async (req, res) => {
   try {
     const { id } = req.params;
     const project = await Project.findById(id);
