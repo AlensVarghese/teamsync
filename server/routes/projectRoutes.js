@@ -24,8 +24,8 @@ const upload = multer({ storage: storage });
 const transporter = nodemailer.createTransport({
   service: 'gmail', // You can use other services like SendGrid, Mailgun, etc.
   auth: {
-    user: 'goravjindal86@gmail.com',
-    pass: 'kggsuzesmoewxvhl'
+    user: 'lozbygaming@gmail.com',
+    pass: 'onpydzokgawlolho'
   }
 });
 
@@ -37,7 +37,7 @@ async function sendEmailNotifications(project, subject, text) {
   const emails = members.map(member => member.email).concat(admin.email);
 
   const mailOptions = {
-    from: 'goravjindal86@gmail.com',
+    from: 'lozbygaming@gmail.com',
     to: emails.join(', '),
     subject: subject,
     text: text
