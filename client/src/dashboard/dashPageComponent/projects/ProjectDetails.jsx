@@ -160,10 +160,20 @@ const ProjectDetails = () => {
   };
 
   const handleArchiveClick = () => {
+
+    // 1. Get the token from localStorage
+    const token = localStorage.getItem("token");
+
     openConfirmModal("Are you sure you want to archive this project?", async () => {
       try {
         await axios.patch(
-          `http://localhost:5000/api/projects/${project._id}/archive`
+          `http://localhost:5000/api/projects/${project._id}/archive`,
+          {}, // Empty data body
+          {
+            headers: {
+              Authorization: `Bearer ${token}`, // Pass the token here
+            },
+          }
         );
         setFeedbackModal({ open: true, message: "Project archived successfully!" });
         setProject({ ...project, archived: true });
@@ -176,9 +186,15 @@ const ProjectDetails = () => {
   };
 
   const handleDeleteClick = () => {
+    // 1. Get the token from storage
+    const token = localStorage.getItem("token");
     openConfirmModal("Are you sure you want to delete this project?", async () => {
       try {
-        await axios.delete(`http://localhost:5000/api/projects/${project._id}`);
+        await axios.delete(`http://localhost:5000/api/projects/${project._id}`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        });
         setFeedbackModal({ open: true, message: "Project deleted successfully!" });
         navigate("/home/projects");
       } catch (error) {

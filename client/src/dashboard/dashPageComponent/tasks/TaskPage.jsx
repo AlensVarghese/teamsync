@@ -170,12 +170,14 @@ const TaskPage = () => {
             <option value="project">Project</option>
           </select>
         </div>
-        <Button
-          onClick={() => setOpenAddTaskModal(true)}
-          className="!bg-customBgBlue hover:!bg-customHeadingColor text-white"
-        >
-          + Add Task
-        </Button>
+        {user?.role === 'Admin' && (
+          <Button
+            onClick={() => setOpenAddTaskModal(true)}
+            className="!bg-customBgBlue hover:!bg-customHeadingColor text-white"
+          >
+            + Add Task
+          </Button>
+        )}
       </div>
 
       <table className="min-w-full border-collapse">
@@ -249,7 +251,7 @@ const TaskPage = () => {
         </tbody>
       </table>
 
-      {openAddTaskModal && (
+      {openAddTaskModal && user?.role === 'Admin' && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
             className="fixed inset-0 bg-black opacity-50"
