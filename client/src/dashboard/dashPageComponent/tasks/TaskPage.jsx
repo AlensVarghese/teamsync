@@ -134,7 +134,16 @@ const TaskPage = () => {
   );
 
   const tasks = userProjects.flatMap((proj) =>
-    (proj.tasks || []).map((task) => ({
+    (proj.tasks || [])
+      .filter((task) => {
+        if (!user) return false;
+        // 1. If the logged-in user is an Admin, show all tasks for these projects
+        if (user?.role === "Admin") return true;
+
+        // 2. Otherwise, only show tasks where the user's email is in the assignees list
+        return task.assignees?.some((assignee) => assignee.email === currentUser.email);
+      })
+      .map((task) => ({
       ...task,
       projectTitle: proj.title,
       projectId: proj._id,
@@ -154,6 +163,16 @@ const TaskPage = () => {
   });
 
   console.log("Rendering TaskPage with tasks:", sortedTasks);
+
+  if (!user) {
+  return (
+    <div className="flex items-center justify-center h-64">
+      <div className="text-gray-500 font-medium animate-pulse">
+        Synchronizing workspace...
+      </div>
+    </div>
+  );
+}
 
   return (
     <div className="">

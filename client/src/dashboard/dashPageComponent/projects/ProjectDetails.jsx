@@ -390,7 +390,13 @@ const ProjectDetails = () => {
             <h3 className="text-lg font-semibold mb-2">Project Tasks</h3>
             {project.tasks && project.tasks.length > 0 ? (
               <div className="space-y-2">
-                {project.tasks.map((task) => (
+                {project.tasks
+                /* 1. Add this filter block right here */
+                  .filter((task) => {
+                  if (user?.role === "Admin") return true; // Admins see all tasks
+                  return task.assignees?.some((a) => a.email === currentUserEmail); // Users see their own
+                 })
+                .map((task) => (
                   <div
                     key={task._id}
                     className="flex justify-between items-center border-b pb-2"
