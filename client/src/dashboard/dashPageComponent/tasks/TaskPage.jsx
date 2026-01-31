@@ -225,18 +225,23 @@ const TaskPage = () => {
                 </td>
                 <td className="border p-2">
                   <div className="flex items-center justify-center gap-2 h-full">
-                    <TooltipButton
-                      className="!px-2 !py-2 !text-base hover:text-white"
-                      onClick={() => setEditingTask(task)}
-                    >
-                      <FaEdit />
-                    </TooltipButton>
-                    <TooltipButton
-                      className="!px-2 !py-2 !text-base !bg-red-200 text-red-500 hover:!text-red-500"
-                      onClick={() => handleDeleteTask(task.projectId, task._id)}
-                    >
-                      <FaTrash />
-                    </TooltipButton>
+                    {user?.role === 'Admin' && ( // Add this check
+                    <>
+                        <TooltipButton
+                          className="!px-2 !py-2 !text-base hover:text-white"
+                          onClick={() => setEditingTask(task)}
+                        >
+                          <FaEdit />
+                        </TooltipButton>
+                        <TooltipButton
+                          className="!px-2 !py-2 !text-base !bg-red-200 text-red-500 hover:!text-red-500"
+                          onClick={() => handleDeleteTask(task.projectId, task._id)}
+                        >
+                          <FaTrash />
+                        </TooltipButton>
+                      </>
+                    )}
+                    {user?.role !== 'Admin' && <span className="text-gray-400">View Only</span>}
                   </div>
                 </td>
               </tr>
@@ -267,7 +272,7 @@ const TaskPage = () => {
         </div>
       )}
 
-      {editingTask && (
+      {editingTask && user?.role === 'Admin' &&(
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div
             className="fixed inset-0 bg-black opacity-50"

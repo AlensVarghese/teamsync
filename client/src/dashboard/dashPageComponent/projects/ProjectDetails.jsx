@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext} from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useProjects } from "../../../utils/ProjectsContext";
 import Button from "../../../components/Button";
@@ -9,11 +9,13 @@ import { MdArchive, MdDelete, MdOutlineEditNote } from "react-icons/md";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import CommentsSection from "./comments/CommentsSection";
 import ConfirmationModal from "../../../dashboard/adminDashboard/ConfirmationModal";
+import { UserContext } from "../../../utils/UserContext"; // Ensure this path is correct
 
 const ProjectDetails = () => {
   const { projectId } = useParams();
   const navigate = useNavigate();
   const { projects, setProjects } = useProjects();
+  const { user } = useContext(UserContext); // Add this line to get the user and their role
   const currentUserEmail = localStorage.getItem("userEmail");
 
   const currentUser = { _id: "currentUserId", email: currentUserEmail };
@@ -136,6 +138,7 @@ const ProjectDetails = () => {
 
   const handleEditSubmit = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token"); // 1. Get token
     const updatedProject = {
       title: managedTitle,
       description: managedDescription,
@@ -146,7 +149,12 @@ const ProjectDetails = () => {
     try {
       const response = await axios.put(
         `http://localhost:5000/api/projects/${project._id}`,
-        updatedProject
+        updatedProject,
+        {
+        headers: {
+          Authorization: `Bearer ${token}`, // 2. Add header
+        },
+      }
       );
       const updatedData = response.data.project;
       setProjects((prevProjects) =>
@@ -320,36 +328,42 @@ const ProjectDetails = () => {
               <h2 className="text-2xl font-semibold leading-none">
                 {project.title}
               </h2>
-              <div className="inline-flex gap-4 justify-end">
+              {/* ONLY SHOW EDIT ICON IF ADMIN */}
+              {user?.role === 'Admin' && (
+                <div className="inline-flex gap-4 justify-end">
+                  <button
+                    onClick={() => setOpenEditModal(true)}
+                    className="border-none bg-transparent p-0 focus:outline-none self-end gap-1 transition text-customBgBlue hover:text-customHeadingColor text-2xl"
+                  >
+                    <MdOutlineEditNote />
+                  </button>
+                </div>
+              )}
+            </div>
+            {/* NEAR LINE 288: The Archive and Delete Buttons */}
+            {user?.role === 'Admin' && (
+              <div className="flex gap-2 text-base">
                 <button
-                  onClick={() => setOpenEditModal(true)}
-                  className="border-none bg-transparent p-0 focus:outline-none self-end gap-1 transition text-customBgBlue hover:text-customHeadingColor text-2xl"
+                  tooltip={
+                    project.archived ? "Project already archived" : "Archive"
+                  }
+                  onClick={!project.archived ? handleArchiveClick : undefined}
+                  className="bg-transparent border-none focus:outline-none flex items-center gap-1 transition text-customBgBlue hover:text-customHeadingColor hover:bg-customWhite"
+                  disabled={project.archived}
                 >
-                  <MdOutlineEditNote />
+                  <MdArchive />
+                  {project.archived ? "Archived" : "Archive"}
+                </button>
+                <button
+                  tooltip="Delete"
+                  onClick={handleDeleteClick}
+                  className="bg-red-500 text-white border-none focus:outline-none flex items-center gap-1 transition hover:bg-red-600"
+                >
+                  <MdDelete />
+                  <span>Delete</span>
                 </button>
               </div>
-            </div>
-            <div className="flex gap-2 text-base">
-              <button
-                tooltip={
-                  project.archived ? "Project already archived" : "Archive"
-                }
-                onClick={!project.archived ? handleArchiveClick : undefined}
-                className="bg-transparent border-none focus:outline-none flex items-center gap-1 transition text-customBgBlue hover:text-customHeadingColor hover:bg-customWhite"
-                disabled={project.archived}
-              >
-                <MdArchive />
-                {project.archived ? "Archived" : "Archive"}
-              </button>
-              <button
-                tooltip="Delete"
-                onClick={handleDeleteClick}
-                className="bg-red-500 text-white border-none focus:outline-none flex items-center gap-1 transition hover:bg-red-600"
-              >
-                <MdDelete />
-                <span>Delete</span>
-              </button>
-            </div>
+            )}
           </div>
           <div className="flex items-center gap-2">
             <p className="text-sm text-customBlack">Created by: </p>
@@ -520,7 +534,7 @@ const ProjectDetails = () => {
         </div>
       </div>
 
-      {openEditModal && (
+      {openEditModal && user?.role === 'Admin' && (
         <div className="fixed inset-0 flex items-center justify-center z-20 bg-black bg-opacity-50">
           <div className="bg-white rounded-xl p-6 w-[40%] relative">
             <button

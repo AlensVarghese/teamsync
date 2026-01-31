@@ -49,8 +49,11 @@ const ManageUsers = () => {
   };
 
   const handleDeleteConfirm = async () => {
+    const token = localStorage.getItem("token"); // Get token
     try {
-      await axios.delete(`http://localhost:5000/api/auth/users/${deleteModal.userId}`);
+      await axios.delete(`http://localhost:5000/api/auth/users/${deleteModal.userId}`,{
+      headers: { Authorization: `Bearer ${token}` } // Add header);
+      });
       setUsers(users.filter((user) => user._id !== deleteModal.userId));
     } catch (error) {
       console.error("Error deleting user:", error);
@@ -62,13 +65,16 @@ const ManageUsers = () => {
   // Add a new user using modal feedback instead of alert
   const handleAddUser = async (e) => {
     e.preventDefault();
+    const token = localStorage.getItem("token"); // Get token
     if (!email || !password) {
       setFeedbackModal({ open: true, message: "Please enter both email and password." });
       return;
     }
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", { email, password });
+      const response = await axios.post("http://localhost:5000/api/auth/register", { email, password },
+        { headers: { Authorization: `Bearer ${token}` } } // Add header
+      );
       setUsers([...users, { _id: response.data._id, email }]);
       setEmail("");
       setPassword("");
@@ -193,12 +199,16 @@ const ManageProjects = ({ showArchived }) => {
   const handleArchive = (projectId) => {
     const projectToToggle = projects.find((p) => p._id === projectId);
     if (!projectToToggle) return;
+    const token = localStorage.getItem("token"); // Get token
     const actionText = projectToToggle.archived ? "Unarchive" : "Archive";
     openConfirmModal(
       `${actionText} this project?`,
       async () => {
         try {
-          await axios.patch(`http://localhost:5000/api/projects/${projectId}/archive`);
+          await axios.patch(`http://localhost:5000/api/projects/${projectId}/archive`, 
+            {}, 
+            { headers: { Authorization: `Bearer ${token}` } } // Add header
+          );
           setProjects((prevProjects) =>
             prevProjects.map((project) =>
               project._id === projectId
@@ -216,11 +226,14 @@ const ManageProjects = ({ showArchived }) => {
   };
 
   const handleDelete = (projectId) => {
+    const token = localStorage.getItem("token"); // Get token
     openConfirmModal(
       "Delete this project? This action cannot be undone.",
       async () => {
         try {
-          await axios.delete(`http://localhost:5000/api/projects/${projectId}`);
+            await axios.delete(`http://localhost:5000/api/projects/${projectId}`,{
+            headers: { Authorization: `Bearer ${token}` } // Add header
+          });
           setProjects(projects.filter((project) => project._id !== projectId));
         } catch (error) {
           console.error("Error deleting project:", error);
