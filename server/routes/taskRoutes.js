@@ -15,4 +15,6 @@ router.post('/add', authenticateToken, authorizeAdmin, taskController.addTask);
 // Delete Task - Restricted to Admin
 router.delete('/:id', authenticateToken, authorizeAdmin, taskController.deleteTask);
 
+router.patch("/:taskId/toggle", authenticateToken, taskController.toggleTaskCompletion);
+
 module.exports = router;

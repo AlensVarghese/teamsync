@@ -167,6 +167,24 @@ const ProjectDetails = () => {
     }
   };
 
+  // Add this inside the ProjectDetails component
+  const handleToggleTask = async (taskId) => {
+      try {
+        const token = localStorage.getItem("token");
+        await axios.patch(
+          `http://localhost:5000/api/tasks/${taskId}/toggle`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+        
+        // Re-fetch project to update the UI
+        const response = await axios.get(`http://localhost:5000/api/projects/${projectId}`);
+        setProject(response.data.project);
+      } catch (error) {
+        console.error("Failed to toggle task status:", error);
+      }
+    };
+
   const handleArchiveClick = () => {
 
     // 1. Get the token from localStorage
@@ -386,47 +404,73 @@ const ProjectDetails = () => {
             )}
           </div>
           <p className="text-sm">{project.description}</p>
-          <div className="Tasks p-4 bg-customWhite mt-4 rounded-lg">
-            <h3 className="text-lg font-semibold mb-2">Project Tasks</h3>
+          <div className="Tasks p-4 bg-customWhite mt-4 rounded-lg border border-gray-100">
+            <h3 className="text-lg font-semibold mb-3">Project Tasks</h3>
+            
             {project.tasks && project.tasks.length > 0 ? (
-              <div className="space-y-2">
-                {project.tasks
-                /* 1. Add this filter block right here */
-                  .filter((task) => {
-                  if (user?.role === "Admin") return true; // Admins see all tasks
-                  return task.assignees?.some((a) => a.email === currentUserEmail); // Users see their own
-                 })
-                .map((task) => (
-                  <div
-                    key={task._id}
-                    className="flex justify-between items-center border-b pb-2"
-                  >
-                    <div>
-                      <p className="font-semibold text-sm">{task.taskName}</p>
-                      <p className="text-xs text-gray-600">
-                        Deadline: {new Date(task.deadline).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <div className="flex space-x-2">
-                      {task.assignees && task.assignees.length > 0 ? (
-                        task.assignees.map((assignee) => (
-                          <UserAvatar
-                            key={assignee.email}
-                            email={assignee.email}
-                            size={28}
-                          />
-                        ))
-                      ) : (
-                        <p className="text-xs text-gray-500">No assignees</p>
-                      )}
-                    </div>
+              <div className="space-y-4">
+                
+                {/* SECTION 1: ACTIVE TASKS */}
+                <div className="space-y-2">
+                  {project.tasks
+                    .filter((task) => !task.completed) // Only show non-completed
+                    .filter((task) => {
+                      if (user?.role === "Admin") return true;
+                      return task.assignees?.some((a) => a.email === currentUserEmail);
+                    })
+                    .map((task) => (
+                      <div key={task._id} className="flex justify-between items-center border-b pb-2">
+                        <div>
+                          <p className="font-semibold text-sm">{task.taskName}</p>
+                          <p className="text-xs text-gray-600">
+                            Deadline: {new Date(task.deadline).toLocaleDateString()}
+                          </p>
+                        </div>
+                        <div className="flex items-center gap-3">
+                          <button 
+                            onClick={() => handleToggleTask(task._id)}
+                            className="bg-green-600 text-white text-[10px] px-2 py-1 rounded hover:bg-green-700 transition font-medium"
+                          >
+                            Complete
+                          </button>
+                          <div className="flex space-x-1">
+                            {task.assignees?.map((a) => (
+                              <UserAvatar key={a.email} email={a.email} size={28} />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+
+                {/* SECTION 2: COMPLETED TASKS */}
+                <div className="mt-6 pt-4 border-t border-dashed border-gray-300">
+                  <h4 className="text-sm font-bold text-gray-400 mb-3 uppercase tracking-wider">Completed Tasks</h4>
+                  <div className="space-y-2">
+                    {project.tasks
+                      .filter((task) => task.completed) // Only show completed
+                      .map((task) => (
+                        <div key={task._id} className="flex justify-between items-center p-2 rounded bg-gray-50 opacity-60 grayscale">
+                          <div className="flex items-center gap-2">
+                            <span className="text-green-600 text-lg">✓</span>
+                            <p className="text-sm line-through text-gray-500 font-medium">{task.taskName}</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <button 
+                              onClick={() => handleToggleTask(task._id)}
+                              className="text-[10px] text-customBgBlue hover:underline bg-transparent border-none p-0"
+                            >
+                              Undo
+                            </button>
+                            <UserAvatar email={task.assignees?.[0]?.email} size={24} />
+                          </div>
+                        </div>
+                      ))}
                   </div>
-                ))}
+                </div>
               </div>
             ) : (
-              <p className="text-sm text-gray-500">
-                No tasks available for this project.
-              </p>
+              <p className="text-sm text-gray-500 italic">No tasks available for this project.</p>
             )}
           </div>
           <div className="flex justify-between items-center pt-4">

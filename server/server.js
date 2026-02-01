@@ -9,6 +9,7 @@ const authRoutes = require('./routes/authRoutes');
 const projectRoutes=require('./routes/projectRoutes')
 const taskRoutes=require('./routes/taskRoutes')
 
+
 dotenv.config();
 
 connectDB(); // Connect to MongoDB
@@ -22,7 +23,7 @@ app.use(bodyParser.json());
 app.use('/api/auth', authRoutes);
 app.use('/api/projects', projectRoutes);
 app.use('/api', taskRoutes);
-
+app.use('/api/tasks', taskRoutes); // This makes all routes start with /api/tasks
 
 
 app.listen(port, () => {

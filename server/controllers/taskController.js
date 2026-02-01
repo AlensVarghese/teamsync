@@ -56,3 +56,19 @@ exports.getUserTasks = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
+exports.toggleTaskCompletion = async (req, res) => {
+  try {
+    const { taskId } = req.params;
+    const task = await Task.findById(taskId);
+    if (!task) return res.status(404).json({ message: "Task not found" });
+
+    // Flip the boolean
+    task.completed = !task.completed;
+    await task.save();
+
+    res.status(200).json({ message: "Task status updated", task });
+  } catch (error) {
+    res.status(500).json({ message: "Update failed", error });
+  }
+};
