@@ -2,9 +2,64 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import UserAvatar from "../dashPageComponent/commonComponents/UserAvatar";
 import ConfirmationModal from "./ConfirmationModal";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+
+const handleGenerateReport = (project) => {
+  const doc = new jsPDF();
+
+  // 1. Add Title and Branding
+  doc.setFontSize(20);
+  doc.setTextColor(40, 78, 120);
+  doc.text("TeamSync Project Status Report", 14, 20);
+  
+  doc.setFontSize(10);
+  doc.setTextColor(100);
+  doc.text(`Report Generated: ${new Date().toLocaleString()}`, 14, 28);
+
+  // 2. Project Summary Table (Using the functional call)
+  autoTable(doc, {
+    startY: 35,
+    head: [['Project Detail', 'Information']],
+    body: [
+      ['Project Title', project.title],
+      ['Created By', project.admin?.email || project.creatorEmail || "N/A"],
+      ['Created Date', new Date(project.createdAt).toLocaleDateString()],
+      ['Description', project.description || 'No description provided'],
+      ['Current Progress', `${project.progress || 0}%`],
+      ['Status', project.archived ? 'Archived' : 'Active'],
+    ],
+    theme: 'grid',
+    headStyles: { fillColor: [40, 78, 120] }
+  });
+
+  // 3. Task Details Table
+  if (project.tasks && project.tasks.length > 0) {
+    doc.setFontSize(14);
+    doc.setTextColor(0);
+    // doc.lastAutoTable.finalY tells us where the previous table ended
+    doc.text("Task Breakdown", 14, doc.lastAutoTable.finalY + 15);
+
+    autoTable(doc, {
+      startY: doc.lastAutoTable.finalY + 20,
+      head: [['Task Name', 'Assignees', 'Deadline', 'Status']],
+      body: project.tasks.map(task => [
+        task.taskName,
+        task.assignees?.map(a => a.email.split('@')[0]).join(', ') || 'Unassigned',
+        new Date(task.deadline).toLocaleDateString(),
+        task.completed ? 'Completed' : 'Pending'
+      ]),
+      headStyles: { fillColor: [100, 100, 100] }
+    });
+  } else {
+    doc.text("No tasks found for this project.", 14, doc.lastAutoTable.finalY + 15);
+  }
+
+  // 4. Save and Download
+  doc.save(`${project.title}_Report.pdf`);
+};
 
 // Manage Users Component
-
 const ManageUsers = () => {
   const [users, setUsers] = useState([]);
   const [email, setEmail] = useState("");
@@ -295,6 +350,13 @@ const ManageProjects = ({ showArchived }) => {
                   {project.archived ? "Yes" : "No"}
                 </td>
                 <td className="border border-gray-300 p-2 flex justify-center items-center">
+                  {/* NEW REPORT BUTTON */}
+                    <button
+                      onClick={() => handleGenerateReport(project)}
+                      className="focus:outline-none bg-indigo-600 hover:bg-indigo-700 transition text-white py-1 px-3 rounded mr-2"
+                    >
+                      Report
+                    </button>
                   <button
                     onClick={() => handleArchive(project._id)}
                     className="focus:outline-none bg-yellow-500 text-white py-1 px-3 rounded mr-2"
