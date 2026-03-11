@@ -27,7 +27,7 @@ const handleGenerateReport = (project) => {
       ['Created Date', new Date(project.createdAt).toLocaleDateString()],
       ['Description', project.description || 'No description provided'],
       ['Current Progress', `${project.progress || 0}%`],
-      ['Status', project.archived ? 'Archived' : 'Active'],
+      ['Status', project.archived ? 'Archived' : (project.progress === 100 ? 'Completed' : 'Active')],
     ],
     theme: 'grid',
     headStyles: { fillColor: [40, 78, 120] }
