@@ -49,7 +49,7 @@ function App() {
               <Route path="logout" element={<LogoutPage />} />
               <Route path="admin" element={<AdminDashboard />} />
               {/* Default nested route */}
-              <Route index element={<AboutPage />} />
+              <Route index element={<DashboardPage />} />
             </Route>
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password/:token" element={<SetNewPassword />} />
