@@ -135,18 +135,8 @@ const Home = () => {
                     link.navTitle === "Admin" &&
                     user?.role !== "Admin"
                   ) {
-                    // Render as a disabled red danger button with a tooltip.
-                    return (
-                      <li key={index}>
-                        <div
-                          title="Only for admin"
-                          className="flex items-center space-x-2 px-8 py-2 rounded-3xl bg-red-500 text-white cursor-not-allowed"
-                        >
-                          {link.navIcon}
-                          <span className="text-lg">{link.navTitle}</span>
-                        </div>
-                      </li>
-                    );
+                    // Do not render the Admin button for non-admin users.
+                    return null;
                   } else {
                     // Otherwise, render the normal NavLink.
                     return (

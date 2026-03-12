@@ -21,6 +21,7 @@ import PrivateRoute from "./utils/PrivateRoute";
 import ProjectDetails from "./dashboard/dashPageComponent/projects/ProjectDetails";
 import DashboardPage from "./dashboard/dashPageComponent/dashboard/DashboardPage";
 import AdminDashboard from "./dashboard/adminDashboard/AdminDashboard";
+import AdminRoute from "./utils/AdminRoute";
 
 function App() {
   return (
@@ -47,7 +48,14 @@ function App() {
               <Route path="about" element={<AboutPage />} />
               <Route path="settings" element={<SettingsPage />} />
               <Route path="logout" element={<LogoutPage />} />
-              <Route path="admin" element={<AdminDashboard />} />
+              <Route 
+                path="admin" 
+                element={
+                  <AdminRoute>
+                    <AdminDashboard />
+                  </AdminRoute>
+                } 
+              />
               {/* Default nested route */}
               <Route index element={<DashboardPage />} />
             </Route>
