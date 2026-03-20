@@ -5,7 +5,7 @@ import Button from "../../../components/Button";
 import TooltipButton from "../../../components/TooltipButton";
 import UserAvatar from "../commonComponents/UserAvatar";
 import axios from "axios";
-import { MdArchive, MdDelete, MdOutlineEditNote } from "react-icons/md";
+import { MdArchive, MdDelete, MdOutlineEditNote, MdCheckCircle } from "react-icons/md";
 import MultiSelectDropdown from "../../../components/MultiSelectDropdown";
 import CommentsSection from "./comments/CommentsSection";
 import ConfirmationModal from "../../../dashboard/adminDashboard/ConfirmationModal";
@@ -31,9 +31,6 @@ const ProjectDetails = () => {
   const [managedTitle, setManagedTitle] = useState(contextProject?.title || "");
   const [managedDescription, setManagedDescription] = useState(
     contextProject?.description || ""
-  );
-  const [managedProgress, setManagedProgress] = useState(
-    contextProject?.progress || 0
   );
   const [managedCoordinatorId, setManagedCoordinatorId] = useState(
     contextProject?.coordinatorId?._id || contextProject?.coordinatorId || ""
@@ -110,7 +107,6 @@ const ProjectDetails = () => {
     if (project) {
       setManagedTitle(project.title);
       setManagedDescription(project.description);
-      setManagedProgress(project.progress);
       setManagedCoordinatorId(project.coordinatorId?._id || project.coordinatorId || "");
       setManagedMembers(project.members);
       setSharedFiles(project.files || []);
@@ -146,11 +142,10 @@ const ProjectDetails = () => {
 
   const handleAddTask = async (newTask) => {
     try {
-      const addedTask = await addTask(newTask);
-      const updatedProject = {
-        ...project,
-        tasks: [...(project.tasks || []), addedTask],
-      };
+      await addTask(newTask);
+      const response = await axios.get(`http://localhost:5000/api/projects/${projectId}`);
+      const updatedProject = response.data.project;
+      
       setProject(updatedProject);
       setProjects((prevProjects) =>
         prevProjects.map((entry) => (entry._id === project._id ? updatedProject : entry))
@@ -167,7 +162,6 @@ const ProjectDetails = () => {
     const updatedProject = {
       title: managedTitle,
       description: managedDescription,
-      progress: Number(managedProgress),
       coordinatorId: managedCoordinatorId || null,
       members: managedMembers.map((m) => m._id),
     };
@@ -210,6 +204,38 @@ const ProjectDetails = () => {
         console.error("Failed to toggle task status:", error);
       }
     };
+
+  const handleCompleteClick = () => {
+    const token = localStorage.getItem("token");
+    openConfirmModal("Are you sure you want to mark this project as complete?", async () => {
+      try {
+        const updatedProjectPayload = {
+          title: project.title,
+          description: project.description,
+          status: 'Completed',
+          coordinatorId: project.coordinatorId?._id || project.coordinatorId || null,
+          members: project.members.map((m) => m._id),
+        };
+        const response = await axios.put(
+          `http://localhost:5000/api/projects/${project._id}`,
+          updatedProjectPayload,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
+        const updatedData = response.data.project;
+        setProjects((prevProjects) =>
+          prevProjects.map((p) => (p._id === project._id ? updatedData : p))
+        );
+        setProject(updatedData);
+        setFeedbackModal({ open: true, message: "Project completed successfully!" });
+      } catch (error) {
+        console.error("Failed to complete project:", error);
+      } finally {
+        closeConfirmModal();
+      }
+    });
+  };
 
   const handleArchiveClick = () => {
 
@@ -389,6 +415,17 @@ const ProjectDetails = () => {
               <div className="flex gap-2 text-base">
                 <button
                   tooltip={
+                    project.status === 'Completed' ? "Project already completed" : "Complete"
+                  }
+                  onClick={project.status !== 'Completed' ? handleCompleteClick : undefined}
+                  className="bg-transparent border-none focus:outline-none flex items-center gap-1 transition text-green-600 hover:text-green-800 hover:bg-green-50 px-2 rounded"
+                  disabled={project.status === 'Completed'}
+                >
+                  <MdCheckCircle />
+                  {project.status === 'Completed' ? "Completed" : "Complete"}
+                </button>
+                <button
+                  tooltip={
                     project.archived ? "Project already archived" : "Archive"
                   }
                   onClick={!project.archived ? handleArchiveClick : undefined}
@@ -449,8 +486,8 @@ const ProjectDetails = () => {
               {canManageTasks && (
                 <Button
                   onClick={() => setOpenAddTaskModal(true)}
-                  className={`!bg-customBgBlue hover:!bg-customHeadingColor text-white ${project.progress === 100 ? "opacity-50 cursor-not-allowed" : ""}`}
-                  disabled={project.progress === 100}
+                  className={`!bg-customBgBlue hover:!bg-customHeadingColor text-white ${project.status === 'Completed' ? "opacity-50 cursor-not-allowed" : ""}`}
+                  disabled={project.status === 'Completed'}
                 >
                   + Add Task
                 </Button>
@@ -476,8 +513,8 @@ const ProjectDetails = () => {
                         <div className="flex items-center gap-3">
                           <button 
                             onClick={() => handleToggleTask(task._id)}
-                            className={`bg-green-600 text-white text-[10px] px-2 py-1 rounded transition font-medium ${project.progress === 100 ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
-                            disabled={project.progress === 100}
+                            className={`bg-green-600 text-white text-[10px] px-2 py-1 rounded transition font-medium ${project.status === 'Completed' ? "opacity-50 cursor-not-allowed" : "hover:bg-green-700"}`}
+                            disabled={project.status === 'Completed'}
                           >
                             Complete
                           </button>
@@ -507,8 +544,8 @@ const ProjectDetails = () => {
                           <div className="flex items-center gap-3">
                             <button 
                               onClick={() => handleToggleTask(task._id)}
-                              className={`text-[10px] bg-transparent border-none p-0 ${project.progress === 100 ? "text-gray-400 cursor-not-allowed" : "text-customBgBlue hover:underline"}`}
-                              disabled={project.progress === 100}
+                              className={`text-[10px] bg-transparent border-none p-0 ${project.status === 'Completed' ? "text-gray-400 cursor-not-allowed" : "text-customBgBlue hover:underline"}`}
+                              disabled={project.status === 'Completed'}
                             >
                               Undo
                             </button>
@@ -665,20 +702,6 @@ const ProjectDetails = () => {
                   onChange={(e) => setManagedDescription(e.target.value)}
                   placeholder="Project Description"
                   className="w-full p-2 border border-gray-300 bg-white text-black rounded text-sm"
-                  required
-                />
-              </div>
-              <div className="mb-4">
-                <label className="block text-sm font-medium mb-1">
-                  Progress (%)
-                </label>
-                <input
-                  type="number"
-                  value={managedProgress}
-                  onChange={(e) => setManagedProgress(e.target.value)}
-                  min="0"
-                  max="100"
-                  className="w-full p-2 border border-gray-300 bg-white text-black rounded"
                   required
                 />
               </div>

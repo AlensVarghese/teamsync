@@ -16,10 +16,10 @@ const DashboardPage = () => {
   );
   const totalProjects = userProjects.length;
   const inProgressProjects = userProjects.filter(
-    (project) => project.progress < 100
+    (project) => project.status === 'Active'
   ).length;
   const completedProjects = userProjects.filter(
-    (project) => project.progress === 100
+    (project) => project.status === 'Completed'
   ).length;
 
   const handleNavigateProject = () => {
@@ -135,12 +135,12 @@ const DashboardPage = () => {
                 <p className="text-sm font-medium">{project.title}</p>
                 <p
                   className={`text-sm font-semibold ${
-                    project.progress < 100
+                    project.status === 'Active'
                       ? "text-yellow-700"
                       : "text-green-700"
                   }`}
                 >
-                  {project.progress < 100 ? "In Progress" : "Completed"}
+                  {project.status === 'Active' ? "In Progress" : "Completed"}
                 </p>
               </div>
             ))}
